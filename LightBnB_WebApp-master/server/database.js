@@ -17,6 +17,8 @@ const pool = new Pool({
  * @param {String} email The email of the user.
  * @return {Promise<{}>} A promise to the user.
  */
+
+// database query with user email
 const getUserWithEmail = function(email) {
   return pool.query(`
   SELECT * FROM users 
@@ -43,8 +45,25 @@ exports.getUserWithEmail = getUserWithEmail;
  * @param {string} id The id of the user.
  * @return {Promise<{}>} A promise to the user.
  */
+
+// database query for user with specific ID
 const getUserWithId = function(id) {
-  return Promise.resolve(users[id]);
+  return pool.query(`
+  SELECT * FROM users
+  WHERE id = $1`, [id])
+  .then(result => {
+    if (result.rows.length === 0) {
+      return null;
+    }
+
+    // if not null, return user obj
+    return result.rows[0];
+  })
+  .catch((err) => {
+    console.log(err.message);
+  })
+
+
 }
 exports.getUserWithId = getUserWithId;
 
